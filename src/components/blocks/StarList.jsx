@@ -23,10 +23,19 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 export const StarList = ({ data }) => {
+  const dispatch = useContext(DispatchContext);
+
+  const onClickStar = (e, id) => {
+    dispatch({
+      type: 'star',
+      payload: { id },
+    });
+  };
+
   return (
     <Container sx={{ mt: 2, mb: 10 }}>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 400 }} aria-label="table">
+        <Table sx={{ minWidth: 400 }} aria-label="starred table">
           <TableHead>
             <TableRow>
               <StyledTableCell>翻訳前テキスト</StyledTableCell>
@@ -37,10 +46,15 @@ export const StarList = ({ data }) => {
           <TableBody>
             {data.map((d) => (
               <TableRow key={d.id} hover sx={{ cursor: 'pointer' }}>
-                <StyledTableCell component="th" scope="row"></StyledTableCell>
-                <StyledTableCell component="th" scope="row"></StyledTableCell>
-                <StyledTableCell component="th" scope="row">
-                  <IconButton aria-label="star">
+                {/* 翻訳前テキスト */}
+                <StyledTableCell>{d.fromText} ({d.fromLang})</StyledTableCell>
+
+                {/* 翻訳後テキスト */}
+                <StyledTableCell>{d.toText} ({d.toLang})</StyledTableCell>
+
+                {/* スターボタン */}
+                <StyledTableCell>
+                  <IconButton aria-label="star" onClick={(e) => onClickStar(e, d.id)}>
                     <Star {...d} />
                   </IconButton>
                 </StyledTableCell>
