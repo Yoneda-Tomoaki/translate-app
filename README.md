@@ -7,10 +7,10 @@
 # 開発内容
 ## ホーム画面
 <img width="1440" alt="スクリーンショット 2024-12-26 13 55 43" src="https://github.com/user-attachments/assets/48b64a22-a9aa-45fa-a635-158badac470d" />
-----------------------------------------------------------------
+
 ## 翻訳履歴画面
 <img width="1440" alt="スクリーンショット 2024-12-26 13 56 37" src="https://github.com/user-attachments/assets/fb396ad2-124c-4312-aa25-a3cc14c78d00" />
-----------------------------------------------------------------
+
 ## お気に入りリスト画面
 <img width="1440" alt="スクリーンショット 2024-12-26 13 56 52" src="https://github.com/user-attachments/assets/790e6ba3-8bd3-43a3-ad13-9ce0e88fb583" />
 ## 詳細画面
