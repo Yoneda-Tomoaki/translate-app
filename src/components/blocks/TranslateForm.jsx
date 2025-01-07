@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
-import { Box, Stack, Button, Container, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { Box, Stack, Button, Container, TextField, FormControl, InputLabel, Select, MenuItem, IconButton } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { DispatchContext } from '../providers/DispatchContext';
 import { getTranslate } from '../providers/TranslateAPI';
 import { countries } from './Countries';
@@ -10,7 +11,7 @@ export const TranslateForm = () => {
   const [fromText, setFromText] = useState('りんご');
   const [toText, setToText] = useState('');
   const [fromLang, setFromLang] = useState('ja-JP');
-  const [toLang, setToLang] = useState('en-US');
+  const [toLang, setToLang] = useState('ko-KR');
 
   const handleFromTextChange = (e) => {
     setFromText(e.target.value);
@@ -32,8 +33,6 @@ export const TranslateForm = () => {
 
     try {
       const data = await getTranslate(fromText, fromLang, toLang);
-      console.log('API Response:', data); // ここでレスポンスを確認
-      // レスポンスデータの安全な取得
       let result = data?.responseData?.translatedText || '';
       data?.matches?.forEach((match) => {
         if (match.id === 0) {
@@ -60,30 +59,96 @@ export const TranslateForm = () => {
     }
   };
 
+  const handleCopyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(
+      () => { },
+      (err) => {
+        console.error('コピーに失敗しました:', err);
+      }
+    );
+  };
+
+  const handleSpeak = (text, lang) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      speechSynthesis.speak(utterance);
+    } else {
+      console.error('Speech synthesis not supported in this browser.');
+    }
+  };
 
   return (
     <Container maxWidth="md" sx={{ my: 5 }}>
       <Stack
         direction="row"
         justifyContent="space-between"
-        alignItems="flex-start" // 上揃えで配置
+        alignItems="flex-start"
         spacing={4}
       >
         {/* 翻訳前のテキストと言語 */}
-        <Box sx={{ width: '45%' }}>
-          <TextField
-            variant="outlined"
-            rows={10} // 行数を増やして高さを調整
-            multiline
-            id="from-text"
-            label="翻訳前の言葉"
-            value={fromText}
-            onChange={handleFromTextChange}
-            sx={{
-              width: '100%', // 幅を100%に設定
-              backgroundColor: '#ffffff',
-            }}
-          />
+        <Box sx={{ width: '100%' }}>
+          <Box sx={{ position: 'relative' }}>
+            <TextField
+              variant="outlined"
+              rows={10}
+              multiline
+              id="from-text"
+              label="翻訳前の言葉"
+              value={fromText}
+              onChange={handleFromTextChange}
+              fullWidth
+              sx={{
+                fontSize: '25px',
+                width: '100%',
+                backgroundColor: '#ffffff',
+              }}
+            />
+            {/* 音声読み上げボタン */}
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleSpeak(fromText, fromLang)}
+              sx={{
+                position: 'absolute',
+                bottom: 10,
+                right: 170, // 翻訳ボタンとの間隔
+                zIndex: 1,
+                padding: '4px 10px',
+              }}
+            >
+              <VolumeUpIcon sx={{ mr: 1 }} />
+              読み上げ
+            </Button>
+            {/* 翻訳ボタン */}
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleOnClickTranslate}
+              sx={{
+                position: 'absolute',
+                bottom: 10,
+                right: 70,
+                zIndex: 1,
+                padding: '10px 20px',
+              }}
+            >
+              翻訳
+            </Button>
+            {/* コピーアイコン */}
+            <IconButton
+              color="primary"
+              onClick={() => handleCopyToClipboard(fromText)}
+              sx={{
+                position: 'absolute',
+                bottom: 10,
+                right: 10,
+                zIndex: 1,
+              }}
+            >
+              <ContentCopyIcon />
+            </IconButton>
+          </Box>
           <FormControl sx={{ my: 2 }} fullWidth size="small">
             <InputLabel id="from-lang-input-label">翻訳前の言語</InputLabel>
             <Select
@@ -101,31 +166,51 @@ export const TranslateForm = () => {
           </FormControl>
         </Box>
 
-        {/* 翻訳ボタン */}
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={handleOnClickTranslate}
-          sx={{ height: 50, alignSelf: 'center' }} // ボタンを縦方向中央に揃える
-        >
-          翻訳
-          <ArrowForwardIosIcon fontSize="small" />
-        </Button>
-
         {/* 翻訳後のテキストと言語 */}
-        <Box sx={{ width: '45%' }}>
-          <TextField
-            id="to-text"
-            label="翻訳後の言葉"
-            multiline
-            rows={10} // 行数を増やして高さを調整
-            variant="outlined"
-            value={toText}
-            sx={{
-              width: '100%', // 幅を100%に設定
-              backgroundColor: '#ffffff',
-            }}
-          />
+        <Box sx={{ width: '100%' }}>
+          <Box sx={{ position: 'relative' }}>
+            <TextField
+              id="to-text"
+              label="翻訳後の言葉"
+              multiline
+              rows={10}
+              variant="outlined"
+              value={toText}
+              sx={{
+                width: '100%',
+                backgroundColor: '#ffffff',
+              }}
+            />
+            {/* 音声読み上げボタン */}
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleSpeak(toText, toLang)}
+              sx={{
+                position: 'absolute',
+                bottom: 10,
+                right: 60,
+                zIndex: 1,
+                padding: '4px 10px',
+              }}
+            >
+              <VolumeUpIcon sx={{ mr: 1 }} />
+              読み上げ
+            </Button>
+            {/* コピーアイコン */}
+            <IconButton
+              color="primary"
+              onClick={() => handleCopyToClipboard(toText)}
+              sx={{
+                position: 'absolute',
+                bottom: 10,
+                right: 10,
+                zIndex: 1,
+              }}
+            >
+              <ContentCopyIcon />
+            </IconButton>
+          </Box>
           <FormControl sx={{ my: 2 }} fullWidth size="small">
             <InputLabel id="to-lang-input-label">翻訳後の言語</InputLabel>
             <Select

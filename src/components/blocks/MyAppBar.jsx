@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { styled, alpha } from '@mui/material/styles';
 import { Box, Stack, Typography, Paper } from '@mui/material';
 import { Button } from '@mui/material';
 import { AppBar, Toolbar, InputBase, IconButton } from '@mui/material';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 
 export const MyAppBar = () => {
   return (
@@ -14,7 +13,7 @@ export const MyAppBar = () => {
           size="large"
           color="appbartitle"
           variant="text"
-          startIcon={<MonetizationOnIcon />}
+          startIcon={<LocalCafeIcon />}
           component={Link}
           to={'/'}
         >
